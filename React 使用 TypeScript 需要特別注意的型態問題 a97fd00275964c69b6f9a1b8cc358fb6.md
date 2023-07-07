@@ -9,7 +9,7 @@ TypeScript 顧名思義就是所有的變數都需要先宣告，即使在開發
 
 ## **forwardRef 的型態問題**
 
-寫 js 時forwardRef 都不會管型態，但父階取得 ref 並呼叫函式卻會出現錯誤
+寫 js 時forwardRef 都不會管型態，但在 TypeScript 時父階取得 ref 並呼叫函式卻會出現錯誤
 
 ![Untitled](React%20%E4%BD%BF%E7%94%A8%20TypeScript%20%E9%9C%80%E8%A6%81%E7%89%B9%E5%88%A5%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9E%8B%E6%85%8B%E5%95%8F%E9%A1%8C%20a97fd00275964c69b6f9a1b8cc358fb6/Untitled.png)
 
