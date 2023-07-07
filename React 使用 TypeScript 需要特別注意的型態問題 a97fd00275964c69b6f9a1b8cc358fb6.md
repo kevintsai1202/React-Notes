@@ -32,13 +32,13 @@ export interface Ref {
 };
 ```
 
-1. 在 forwardRef 加上泛型
+2. 在 forwardRef 加上泛型
 
 ```jsx
 export default forwardRef<RefType, PropsType>((props: PropsType, ref)={
 ```
 
-1. 在父階組件使用 useRef 也要加入泛型
+3. 在父階組件使用 useRef 也要加入泛型
 
 ```jsx
 const masterDataRef = useRef<RefType>(null);
