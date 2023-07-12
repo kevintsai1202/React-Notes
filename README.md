@@ -5,3 +5,5 @@
 內容主要是學習過程中採到的坑，所以必須有點底子或是剛好遇到才看得懂XD
 
 [React + Ant Design ProCompoents元件使用心得](React%20+%20Ant%20Design%20ProCompoents元件使用心得%2094638e0c0688436aafc02033aec1df83.md)
+
+[React%20使用%20TypeScript%20需要特別注意的型態問題](React%20使用%20TypeScript%20需要特別注意的型態問題%20a97fd00275964c69b6f9a1b8cc358fb6.md)
