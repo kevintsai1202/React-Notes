@@ -39,3 +39,84 @@ let url: string = http://${window.location.host}/api/something;
 ```
 
 ${window.location.host} 這個變數會取得瀏覽器目前的 hostname，這樣不管部屬到甚麼環境，都能抓到正確的網址，也不需要重新 build 網頁了
+
+-----
+
+**補充**
+
+原本程式測好好的，沒想到客戶要求要部屬到Tomcat上，沒關係Springboot支援打包成war檔，只要把pom.xml的packaging標籤從jar改成war不就得了!!
+
+好吧，其實沒這麼容易，war只是壓縮格式，還需要引入Tomcat的插件跟設定才能部屬到Tomcat伺服器中，我們先來改pom.xml吧
+1.修改pom.xml
+第一步還是先把打包方式改掉
+
+```
+<packaging>war</packaging>
+```
+
+接著引入tomcat包
+
+```
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-tomcat</artifactId>
+	<scope>provided</scope>
+</dependency>
+```
+
+另外因為部屬到Tomcat會用打包的檔名建立目錄，所以可以在build標籤下加上finalName
+
+```
+<finalName>avlgroup</finalName>
+```
+
+這樣打包後就會存成avlgroup.war
+
+不過這只是壓縮格式，我們的程式目前還是只支援Java啟動(透過main啟動)，要放在Tomcat可要符合Servlet的方式才能在Tomcat中啟動阿
+還好Springboot也都幫我們想好了，如果一開始建立專案就勾選War的話，在根路徑除了主程式還會有一個ServletInitializer.java
+內容如下
+
+```
+public class ServletInitializer extends SpringBootServletInitializer {
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(MyAppApplication.class);
+	}
+}
+```
+其實這就是部屬在 Tomcat 後會啟動的 Servlet 函式，而程式最後還是加載我們的 Main 主程式
+
+若專案是之後才改成War，記得手動增加這個程式，之後部屬到Tomcat上才能正常執行
+
+接著打包放進 tomcat 的 webapps 目錄，可以順利解壓縮並部屬，趕快輸入網址測試，沒想到畫面一片空白...
+
+檢查 log 才發現問題大了，原來給Tomcat管理的話會多一個路徑
+
+原本網址輸入
+```
+http://localhost:8080/
+```
+現在都改成
+```
+http://localhost:8080/avlgroup
+```
+
+所以原本寫在 react 裡的路徑全都要修改了，有路徑的地方包含 api 還有 router 所設定的網址
+最後還有一點很重要的的，就是 build 完產生的 index.html 也需要更改(其實應該可透過參數加上，不過先手動調整吧)
+如下面的 code，js 跟 css 的路徑都要加上，若有用 icon 也要記得修改
+```
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GPM管理平台</title>
+    <script type="module" crossorigin src="/avlgroup/assets/index-994b621e.js"></script>
+    <link rel="stylesheet" href="/avlgroup/assets/index-04490b11.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+```
