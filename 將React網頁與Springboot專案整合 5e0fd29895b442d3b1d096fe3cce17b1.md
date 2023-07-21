@@ -46,7 +46,7 @@ ${window.location.host} 這個變數會取得瀏覽器目前的 hostname，這�
 
 原本程式測好好的，沒想到客戶要求要部屬到Tomcat上，沒關係Springboot支援打包成war檔，只要把pom.xml的packaging標籤從jar改成war不就得了!!
 
-好吧，其實沒這麼容易，war只是壓縮格式，還需要引入Tomcat的插件跟設定才能部屬到Tomcat伺服器中，我們先來改pom.xml吧
+其實沒這麼容易，war只是壓縮格式，還需要引入Tomcat的插件跟設定才能部屬到Tomcat伺服器中，我們先來改pom.xml吧
 
 1. 第一步還是先把打包方式改掉
 
@@ -89,7 +89,20 @@ public class ServletInitializer extends SpringBootServletInitializer {
 
 若專案是之後才改成War，記得手動增加這個程式，之後部屬到Tomcat上才能正常執行
 
-接著打包放進 tomcat 的 webapps 目錄，可以順利解壓縮並部屬，趕快輸入網址測試，沒想到畫面一片空白...
+5. application.yml 須加上靜態資源路徑
+若使用 war 部屬的話靜態路徑會跟jar的不太一樣，這時需要在設定檔中指定，否則會找不到網頁跟 js 檔
+需要加的內容如下，主要是說靜態支援有哪些檔案可以讀取，還有靜態支援的路徑（包成 war 後都會放在class目錄下）
+```
+spring:
+  mvc:
+    static-path-pattern: /**
+  web:
+    resources:
+      static-locations: classpath:/static/
+```
+
+
+以上完成後趕緊打包放進 tomcat 的 webapps 目錄，可以順利解壓縮並部屬，輸入網址測試，沒想到畫面一片空白...
 
 檢查 log 才發現問題大了，原來給Tomcat管理的話會多一個路徑
 
@@ -102,9 +115,9 @@ http://localhost:8080/
 http://localhost:8080/avlgroup
 ```
 
-5. 修改react路徑
-所以原本寫在 react 裡的路徑全都要修改了，有路徑的地方包含 api 還有 router 所設定的網址
-最後還有一點很重要的的，就是 build 完產生的 index.html 也需要更改(其實應該可透過參數加上，不過先手動調整吧)
+6. 修改react路徑
+所以 react 的路徑全都要修改，有路徑的地方包含 api 還有 router 所設定的網址
+還有一點很重要，就是 build 完產生的 index.html 也要更改(其實應該可透過參數加上，不過先手動調整吧)
 如下面的 code，js 跟 css 的路徑都要加上，若有用 icon 也要記得修改
 ```
 <!DOCTYPE html>
@@ -122,3 +135,7 @@ http://localhost:8080/avlgroup
   </body>
 </html>
 ```
+
+總算又能順利執行了，改個部署方式沒想到問題這麼多，以後真的要確認好需求才不會後面搞一堆事
+![圖片](https://github.com/kevintsai1202/React-Notes/assets/12706683/d9c18c4e-79b0-43cd-b94f-0b91169de528)
+
